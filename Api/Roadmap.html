@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>D3.js Tree Roadmap</title>
+ 
+  </head>
+  <body>
+    <button onclick="downloadAsImage()">Download as Image</button>
+    <div id="chart" height ="2500px" width="1500px">
+ 
+    </div
+      <script src="https://d3js.org/d3.v3.min.js"> </script>
+     <script src="https://d3js.org/d3.v6.min.js">
+   </script><!-- Include the svg2canvas library -->
+<script src="https://cdn.jsdelivr.net/npm/svg2canvas/dist/svg2canvas.min.js"></script>
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+     <script>
+     // Define the dimensions of the canvas
+const margin = { top: 20, right: 90, bottom: 30, left: 90 };
+const width = 1200 - margin.left - margin.right;
+const height = 2000 - margin.top - margin.bottom;
+const colors = ['blue', 'orange', 'red', 'green', 'black', 'purple'];
+
+// Create the canvas
+const svg = d3.select('#chart')
+  .append('svg')
+  .attr('width', width + margin.left + margin.right)
+  .attr('height', height + margin.top + margin.bottom)
+  .append('g')
+  .attr('transform', `translate(${margin.left}, ${margin.top})`);
+// Define your custom JSON data
+// Create the tree layout
+const treeLayout = d3.tree()
+  .size([height, width])
+  .separation((a, b) => (a.parent == b.parent ? 4 : 3));
+
+// Assigns parent, children, height, depth
+const root = d3.hierarchy(data);
+root.x0 = height / 2;
+root.y0 = 0;
+
+// Compute the new tree layout.
+const treeData = treeLayout(root);
+
+// Draw the links
+// Draw the links
+
+
+
+
+const links = svg.selectAll('.link')
+  .data(treeData.links())
+  .enter()
+  .append('path')
+  .attr('class', 'link')
+  .attr('stroke-width', 2)
+  .attr('fill', 'none')
+  .attr('d', d => {
+    const path = d3.path();
+    path.moveTo(d.source.y, d.source.x);
+    path.bezierCurveTo(
+      (d.source.y + d.target.y) / 2, d.source.x,
+      (d.source.y + d.target.y) / 2, d.target.x,
+      d.target.y, d.target.x
+    );
+    return path.toString();
+  })
+  .each(function(d, i) {
+    d3.select(this).attr('stroke', colors[i % colors.length]);
+  });
+
+
+
+// Draw the nodes
+const nodes = svg.selectAll('.node')
+  .data(treeData.descendants())
+  .enter()
+  .append('g')
+  .attr('class', 'node')
+  .attr('transform', d => `translate(${d.y},${d.x})`);
+// Draw the node rectangles
+const padding = 10;
+const lineHeight = 18; // The height of each line
+const maxCharsPerLine = 15; // The maximum number of characters per line
+
+nodes.append('rect')
+  .attr('width', d => (Math.min(d.data.name.length, 1+maxCharsPerLine) * 10) + padding)
+  .attr('height', d => (d.data.name.length/maxCharsPerLine+1) * (lineHeight) + padding)
+  .attr('x', d => -((Math.min(d.data.name.length, maxCharsPerLine) * 10) / 2) - (padding / 2))
+  .attr('y', d => -(d.data.name.split('\n').length * lineHeight) / 2)
+  .style('fill', 'white');
+
+// Add text to the nodes
+nodes.append('text')
+  .attr('text-anchor', 'middle')
+  .attr('alignment-baseline', 'middle')
+  .style('fill', 'black')
+  .selectAll('tspan')
+  .data(d => {
+    const name = d.data.name;
+    const words = name.split(' ');
+    const lines = [];
+    let currentLine = '';
+    for (const word of words) {
+      if (currentLine.length + word.length <= maxCharsPerLine) {
+        currentLine += word + ' ';
+      } else {
+        lines.push(currentLine.trim());
+        currentLine = word + ' ';
+      }
+    }
+    lines.push(currentLine.trim());
+    return lines;
+  })
+  .enter()
+  .append('tspan')
+  .attr('x', 0)
+  .attr('dy', lineHeight)   
+  .text(d => d);
+
+  // function downloadAsImage() {
+  //   // Get the div element
+  //   const element = document.getElementById("chart");
+    
+  //   // Use html2canvas to render the div as an image
+  //   html2canvas(element).then(canvas => {
+  //     // Create a temporary link element to download the image
+  //     const link = document.createElement("a");
+  //     link.download = "my-image.png";
+  //     link.href = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+      
+  //     // Click the link to download the image
+  //     link.click();
+  //   });
+  // }
+     </script> 
+  
+  </body>
+</html>

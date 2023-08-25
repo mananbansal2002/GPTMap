@@ -1,0 +1,17 @@
+.chosse-us-icon{
+    transition-duration: 800ms;
+    height: 76px;
+    width: 76px;
+    background-color: #fc6060;
+    display: inline-block;
+    text-align: center;
+    line-height: 76px;
+    border-radius: 50%;
+    color: #ffffff;
+    font-size: 30px;
+    position: absolute;
+    top: -38px;
+    left: 50%;
+    margin-left: -38px;
+
+}
