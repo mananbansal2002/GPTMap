@@ -8,8 +8,8 @@ const fetch = require("cross-fetch");
 const cors = require('cors');
 const { base64 } = require('base64-img');
 const { encode } = require('punycode');
-
-const api_key ="";
+require('dotenv').config()
+const api_key = process.env.API_KEY;
 
 async function QueryMessage(topic) {
   const payload = {
