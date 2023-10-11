@@ -20,13 +20,6 @@ GPTMapper is an AI-powered guide to success, offering a personalized roadmap for
   </br>
   
   
-  <h1>Team Members </h1>
-  <ul>
-  <li>Akansha Aggarwal - Frontend Developer</li>
-  <li>Manan Bansal - Backend Developer</li>
-  <li>Tanu Singh - UI/UX Designer</li>
-  <li>Arya Kumari - Backend Developer</li>
-  </ul>
   </br>
   </br>
     <h1>Demo link : </h1>
