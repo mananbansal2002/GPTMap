@@ -40,7 +40,7 @@ const HomePage = () => {
   const fetchPhotoData = async (topic) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://gptmapper.onrender.com/getRoadmap?topic="${topic}"`, {
+      const response = await fetch(`https://gptmapper.onrender.com/getRoadmap?topic=${topic}`, {
         headers: {
           'Access-Control-Allow-Origin': '*',
         },
