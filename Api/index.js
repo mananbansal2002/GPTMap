@@ -8,45 +8,76 @@ const fetch = require("cross-fetch");
 const cors = require('cors');
 const { base64 } = require('base64-img');
 const { encode } = require('punycode');
+const  axios  =  require('axios');
 require('dotenv').config()
 const api_key = process.env.API_KEY;
 
-async function QueryMessage(topic) {
-  const payload = {
-    prompt:
-    `create a json data depicting the roadmap for the topic ${topic} just provide the json data no need to write anything else. create the json data in the format name and children like children is of Treenode type and Treenode contains Treenode named children and a string named name, every children must have a children too , which can be empty `,
-             temperature: 0.7,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-    max_tokens: 3800,
-    stream: false,
-    n: 1,
-    model: "text-davinci-003",
-  };
-  try {
-    const response = await fetch('https://api.openai.com/v1/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer '+api_key,
-      },
-      body: JSON.stringify(payload)
-    });
-    const data = await response.json();
-	  console.log(data)
-    if (data?.choices?.length) {
-      let messageFromGita = "";
-      data?.choices?.map((obj) => (messageFromGita += obj.text));
 
-      return messageFromGita.trim();
-    }
-    return "Something went wrong";
+
+
+function isValidJSON(myString) {
+  try {
+      JSON.parse(myString);
+      return true;
   } catch (error) {
-    console.log(error.message, error);
-    return "There's some error.";
+      return false;
   }
 }
+
+function cleanText(inputString) {
+  const openingBraceIndex = inputString.indexOf('{');
+  const closingBraceIndex = inputString.lastIndexOf('}');
+
+  if (openingBraceIndex !== -1 && closingBraceIndex !== -1 && closingBraceIndex > openingBraceIndex) {
+      const extractedText = inputString.substring(openingBraceIndex, closingBraceIndex + 1).trim();
+      return extractedText;
+  } else {
+      return null;
+  }
+}
+
+async function getData(topic) {
+  var conf = `{"temperature": 0.7,"messages":[{"role":"user","content":"create a json data depicting the roadmap for the topic`+ topic +`just provide the json data no need to write anything else. create the json data in the format name and children like children is of Treenode type and Treenode contains Treenode named children and a string named name, every children must have a children too , which can be empty and json must be proper completed"}],"model":"openhermes-2-5-m7b-4k","stream":false,"max_tokens":10000000}`;
+  var value = "";
+  // console.log(topic);
+ 
+      var parsedData = JSON.parse(conf);
+
+      var config = {
+          method: 'post',
+          maxBodyLength: Infinity,
+          url: 'https://chat.nbox.ai/api/chat/completions',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': api_key,
+              // Add your other headers here
+          },
+          data: parsedData
+      };
+
+      const response = await axios(config);
+      value = cleanText(response.data.choices[0].message.content);
+      // console.log(value);
+ 
+  return value;
+}
+
+async function QueryMessage(topic) {
+  for (let i = 0; i < 10; i++) {
+      let response = await getData(topic);
+      if(isValidJSON(response)){
+        // console.log(response);
+      return response;
+      }
+  }
+  return `not Working`;
+}
+
+
+
+
+
+
 
 
 
@@ -258,7 +289,7 @@ let data ={
 
 let datastring = JSON.stringify(data);
 
-console.log(datastring);
+// console.log(datastring);
 
 
 
@@ -282,7 +313,7 @@ app.get('/getRoadmap', async (req, res) => {
     
     modifiedData.splice(32, 0,"data = "+ data); 
         const html = modifiedData.join('\n');
-    console.log(html);
+    // console.log(html);
     if(html==fileCode) console.log("didnt work");
     
     const browser = await puppeteer.launch({ headless: true });
