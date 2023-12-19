@@ -10,8 +10,7 @@ const { base64 } = require('base64-img');
 const { encode } = require('punycode');
 const  axios  =  require('axios');
 require('dotenv').config()
-const api_key = process.env.API_KEY;
-
+let Count =1;
 
 
 
@@ -37,6 +36,10 @@ function cleanText(inputString) {
 }
 
 async function getData(topic) {
+
+  const api_key = process.env[`API_KEY${Count%6+1}`];
+  console.log(Count);
+
   var conf = `{"temperature": 0.7,"messages":[{"role":"user","content":"create a json data depicting the roadmap for the topic`+ topic +`just provide the json data no need to write anything else. create the json data in the format name and children like children is of Treenode type and Treenode contains Treenode named children and a string named name, every children must have a children too , which can be empty and json must be proper completed"}],"model":"openhermes-2-5-m7b-4k","stream":false,"max_tokens":10000000}`;
   var value = "";
   // console.log(topic);
@@ -58,17 +61,19 @@ async function getData(topic) {
       const response = await axios(config);
       value = cleanText(response.data.choices[0].message.content);
       // console.log(value);
- 
+      
   return value;
 }
 
 async function QueryMessage(topic) {
   for (let i = 0; i < 10; i++) {
       let response = await getData(topic);
+      Count++;
       if(isValidJSON(response)){
         // console.log(response);
       return response;
       }
+      
   }
   return `not Working`;
 }
