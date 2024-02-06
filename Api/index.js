@@ -49,7 +49,7 @@ async function getData(topic) {
       var config = {
           method: 'post',
           maxBodyLength: Infinity,
-          url: 'https://chat.nbox.ai/api/chat/completions',
+          url: 'https://chat.tune.app/api/chat/completions',
           headers: {
               'Content-Type': 'application/json',
               'Authorization': api_key,
