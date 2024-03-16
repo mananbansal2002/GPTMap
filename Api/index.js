@@ -40,7 +40,7 @@ async function getData(topic) {
   const api_key = process.env[`API_KEY${Count%6+1}`];
   console.log(Count);
 
-  var conf = `{"temperature": 0.7,"messages":[{"role":"user","content":"create a json data depicting the roadmap for the topic `+ topic +` just provide the json data no need to write anything else. create the json data in the format name and children like children is of Treenode type and Treenode contains Treenode named children and a string named name, every children must have a children too , which can be empty and json must be proper completed"}],"model":"openhermes-2-5-m7b-4k","stream":false,"max_tokens":1000}`;
+  var conf = `{"temperature": 0.7,"messages":[{"role":"user","content":"create a json data depicting the roadmap for the topic `+ topic +` just provide the json data no need to write anything else. create the json data in the format name and children like children is of Treenode type and Treenode contains Treenode named children and a string named name, every children must have a children too , which can be empty and json must be proper completed"}],"model":"openhermes-2-5-m7b-8k","stream":false,"max_tokens":1000}`;
   var value = "";
   // console.log(topic);
  
